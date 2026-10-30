@@ -15,7 +15,7 @@ Deno.serve(async req=>{
   const allowedFonts=["Space Grotesk","DM Sans","Orbitron","Rajdhani","Bebas Neue","Press Start 2P","Audiowide","Cinzel","Oswald","Montserrat"];
   if(title_font!==undefined&&!allowedFonts.includes(title_font))return json({error:"Choose a supported game title font."},400);
   for(const value of [cover_url,banner_url])if(value!==undefined&&value!==null&&(typeof value!=="string"||!value.startsWith("https://")))return json({error:"Artwork URL must be HTTPS."},400);
-  const update={title:title.trim(),description:description.trim(),age_rating};
+  const update:Record<string,unknown>={title:title.trim(),description:description.trim(),age_rating};
   if(cover_url!==undefined)update.cover_url=cover_url;
   if(banner_url!==undefined)update.banner_url=banner_url;
   if(title_font!==undefined)update.title_font=title_font;
