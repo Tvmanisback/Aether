@@ -1,0 +1,30 @@
+name: Build Aether for Windows
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "pc/**"
+      - ".github/workflows/build.yml"
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: pc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: pc/package.json
+      - name: Install dependencies
+        run: npm install
+      - name: Build Windows installer
+        run: npm run dist
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aether-Windows
+          path: pc/dist/*.exe
+          if-no-files-found: error
