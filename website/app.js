@@ -6,7 +6,7 @@ const configured=!SUPABASE_URL.startsWith("YOUR_")&&!SUPABASE_ANON_KEY.startsWit
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let user=null,profile=null,authMode="signin";
 const $=id=>document.getElementById(id), say=(id,t)=>$(id).textContent=t;
-const parseBirth=value=>{const m=/^(0[1-9]|1[0-2])\\/(0[1-9]|[12]\\d|3[01])\\/(\\d{4})$/.exec((value||"").trim());if(!m)return null;const d=new Date(Number(m[3]),Number(m[1])-1,Number(m[2]));return d.getFullYear()===Number(m[3])&&d.getMonth()===Number(m[1])-1&&d.getDate()===Number(m[2])&&d<=new Date()?d:null};
+const parseBirth=value=>{const m=/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\\d|3[01])\/(\\d{4})$/.exec((value||"").trim());if(!m)return null;const d=new Date(Number(m[3]),Number(m[1])-1,Number(m[2]));return d.getFullYear()===Number(m[3])&&d.getMonth()===Number(m[1])-1&&d.getDate()===Number(m[2])&&d<=new Date()?d:null};
 const ageOn=(birth,years)=>{const d=parseBirth(birth);if(!d)return false;const now=new Date();let age=now.getFullYear()-d.getFullYear();if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;return age>=years};
 const birthIso=value=>{const d=parseBirth(value);return d?d.toISOString().slice(0,10):null};
 $("accountBtn").onclick=async()=>{if(user){await sb.auth.signOut();return}$("authDialog").showModal()};
