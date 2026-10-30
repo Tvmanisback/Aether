@@ -26,7 +26,7 @@ For an HTML-based game, include `aether.manifest.json` in the folder. It must co
 
 ```json
 {
-  "aether_public_key": "THE_PUBLIC_KEY_SHOWN_IN_AETHER_SETTINGS",
+  "aether_public_key": "aether_pub_7f4c91d8b6e24a0f9a32c5e81d6b7a40",
   "entry_exe": "YourGame.exe"
 }
 ```
@@ -35,7 +35,7 @@ The public key identifies your Aether app integration; it is **not a secret** an
 
 ## Review and safety
 
-Every submission is private until it passes the platform's security checks and a human moderator approves it. Automated scanning is not a guarantee that software is safe. Only submit software you own or are allowed to distribute. Players should review the publisher and make their own decision before running a downloaded executable.
+Every submission stays private until a human moderator approves it. Automated security scanning is not fully connected in this early build, so approval must not be treated as a guarantee that software is safe. Automated scanning is not a guarantee that software is safe. Only submit software you own or are allowed to distribute. Players should review the publisher and make their own decision before running a downloaded executable.
 
 ## Help and updates
 
