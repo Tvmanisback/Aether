@@ -18,6 +18,10 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install
+      - name: Generate Aether Windows icon
+        run: |
+          npm install --no-save sharp png-to-ico
+          node build-icon.cjs
       - name: Build Windows installer
         run: npm run dist
       - name: Upload installer
