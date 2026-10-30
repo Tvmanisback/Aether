@@ -35,7 +35,7 @@ The public key identifies your Aether app integration; it is **not a secret** an
 
 ## Review and safety
 
-Every submission stays private until a human moderator approves it. Automated security scanning is not fully connected in this early build, so approval must not be treated as a guarantee that software is safe. Automated scanning is not a guarantee that software is safe. Only submit software you own or are allowed to distribute. Players should review the publisher and make their own decision before running a downloaded executable.
+Every submission stays private until a human moderator approves it. Automated security scanning is not connected in this early build, so human approval is not a guarantee that software is safe. Only submit software you own or are allowed to distribute. Players should review the publisher and make their own decision before running a downloaded executable.
 
 ## Help and updates
 
