@@ -1,0 +1,1 @@
+const {contextBridge,shell}=require("electron");contextBridge.exposeInMainWorld("aether",{openStore:()=>shell.openExternal("https://tvmanisback.github.io/Aether/")});
