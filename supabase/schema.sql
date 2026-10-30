@@ -1,0 +1,34 @@
+-- Run in Supabase SQL Editor. Configure admin user UUIDs below after creating your account.
+create extension if not exists pgcrypto;
+create table if not exists public.profiles(id uuid primary key references auth.users(id) on delete cascade, username text unique, role text not null default 'player' check(role in ('player','developer','admin')), age_attested boolean not null default false, created_at timestamptz not null default now());
+create table if not exists public.developer_applications(id uuid primary key default gen_random_uuid(),user_id uuid not null references auth.users(id) on delete cascade,display_name text not null,declared_age int not null check(declared_age between 13 and 120),portfolio text not null,status text not null default 'pending' check(status in ('pending','approved','rejected')),reviewed_at timestamptz,created_at timestamptz not null default now(),unique(user_id));
+create table if not exists public.game_submissions(id uuid primary key,user_id uuid not null references auth.users(id) on delete cascade,title text not null,description text not null,game_path text not null,source_path text not null,status text not null default 'pending_human_review' check(status in ('pending_human_review','approved','rejected')),reviewed_at timestamptz,created_at timestamptz not null default now());
+create table if not exists public.games(id uuid primary key default gen_random_uuid(),submission_id uuid unique references public.game_submissions(id),developer_id uuid not null references auth.users(id),title text not null,description text not null,package_path text not null,source_path text not null,created_at timestamptz not null default now());
+create table if not exists public.library(user_id uuid not null references auth.users(id) on delete cascade,game_id uuid not null references public.games(id) on delete cascade,added_at timestamptz not null default now(),primary key(user_id,game_id));
+create or replace function public.is_admin() returns boolean language sql stable security definer set search_path=public as $$ select exists(select 1 from public.profiles where id=auth.uid() and role='admin') $$;
+create or replace function public.is_developer() returns boolean language sql stable security definer set search_path=public as $$ select exists(select 1 from public.profiles where id=auth.uid() and role in ('developer','admin')) $$;
+create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$ begin if coalesce((new.raw_user_meta_data->>'age_attested')::boolean,false) is not true then raise exception 'You must confirm that you are at least 13 to use Aether.'; end if; insert into public.profiles(id,age_attested) values(new.id,true); return new; end $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();
+alter table public.profiles enable row level security;
+alter table public.developer_applications enable row level security;
+alter table public.game_submissions enable row level security;
+alter table public.games enable row level security;
+alter table public.library enable row level security;
+create policy "profile read self or admin" on public.profiles for select using(id=auth.uid() or public.is_admin());
+create policy "profile update self" on public.profiles for update using(id=auth.uid()) with check(id=auth.uid() and role=(select p.role from public.profiles p where p.id=auth.uid()));
+create policy "apply own once" on public.developer_applications for insert with check(user_id=auth.uid() and declared_age>=18);
+create policy "application read own or admin" on public.developer_applications for select using(user_id=auth.uid() or public.is_admin());
+create policy "admin review applications" on public.developer_applications for update using(public.is_admin()) with check(public.is_admin());
+create policy "developer submit game" on public.game_submissions for insert with check(user_id=auth.uid() and public.is_developer() and status='pending_human_review');
+create policy "submission read owner or admin" on public.game_submissions for select using(user_id=auth.uid() or public.is_admin());
+create policy "admin review submissions" on public.game_submissions for update using(public.is_admin()) with check(public.is_admin());
+create policy "approved games public" on public.games for select using(true);
+create policy "admin manages catalog" on public.games for all using(public.is_admin()) with check(public.is_admin());
+create policy "library owner" on public.library for select using(user_id=auth.uid());
+create policy "library add own" on public.library for insert with check(user_id=auth.uid());
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values('game-submissions','game-submissions',false,524288000,array['application/zip','application/x-zip-compressed','application/octet-stream']) on conflict(id) do nothing;
+create policy "developers upload private packages" on storage.objects for insert to authenticated with check(bucket_id='game-submissions' and (storage.foldername(name))[1]=auth.uid()::text and public.is_developer());
+create policy "owners and admins read packages" on storage.objects for select to authenticated using(bucket_id='game-submissions' and ((storage.foldername(name))[1]=auth.uid()::text or public.is_admin()));
+-- After signup, promote your own user to admin by running this as project owner, replacing UUID:
+-- update public.profiles set role='admin' where id='YOUR_AUTH_USER_UUID';
