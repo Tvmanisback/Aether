@@ -22,16 +22,16 @@ After your developer application is approved, submit both required items:
 
 The selected EXE must also be present inside the selected folder. Aether does not accept a lone `index.html` as a game. If your game is made with HTML, package it as a Windows desktop executable (for example, using an Electron wrapper) and include the complete packaged game folder.
 
-For an HTML-based game, include `aether.manifest.json` in the folder. It must contain the Aether public key and the executable's filename:
+For an HTML-based game, include `aether.manifest.json` in the folder. It must contain the **random public authentication key issued to your developer account by Aether** and the executable's filename:
 
 ```json
 {
-  "aether_public_key": "aether_pub_7f4c91d8b6e24a0f9a32c5e81d6b7a40",
+  "aether_public_key": "YOUR_RANDOM_AETHER_DEVELOPER_KEY",
   "entry_exe": "YourGame.exe"
 }
 ```
 
-The public key identifies your Aether app integration; it is **not a secret** and must never be treated as a password. Never put Supabase service-role keys, private API keys, passwords, or signing secrets in a game folder. Authentication and permissions must be enforced by Aether's backend, not by trusting a key embedded in a client.
+Aether generates this key on its backend after your developer application is approved. Copy it from the Developer section; do not invent or reuse another developer's key. The key identifies the approved developer/game integration. Actual authentication is handled by Aether's backend and requires a valid signed-in Aether user session as well as the matching key. The public key alone cannot sign in or prove a user's identity. Never put Supabase service-role keys, private API keys, passwords, or signing secrets in a game folder.
 
 ## Review and safety
 
