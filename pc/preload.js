@@ -1,1 +1,8 @@
-const {contextBridge,shell}=require("electron");contextBridge.exposeInMainWorld("aether",{openStore:()=>shell.openExternal("https://tvmanisback.github.io/Aether/")});
+const {contextBridge,ipcRenderer}=require("electron");
+contextBridge.exposeInMainWorld("aether",{
+  getStore:()=>ipcRenderer.invoke("aether:store"),
+  getInstalled:()=>ipcRenderer.invoke("aether:installed"),
+  installGame:game=>ipcRenderer.invoke("aether:install",game),
+  launchGame:id=>ipcRenderer.invoke("aether:launch",id),
+  openStore:()=>require("electron").shell?.openExternal?.("https://tvmanisback.github.io/Aether/")
+});
