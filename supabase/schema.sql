@@ -23,7 +23,8 @@ create policy "approved games public" on public.games for select using(true);
 create policy "admin manages catalog" on public.games for all using(public.is_admin()) with check(public.is_admin());
 create policy "library owner" on public.library for select using(user_id=auth.uid());
 create policy "library add own" on public.library for insert with check(user_id=auth.uid());
-insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values('game-submissions','game-submissions',false,1073741824,array['application/octet-stream','text/html','text/css','text/javascript','application/javascript','image/png','image/jpeg','image/svg+xml','font/woff2','application/json']) on conflict(id) do nothing;
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values('game-submissions','game-submissions',false,1073741824,null) on conflict(id) do update set public=false,file_size_limit=1073741824,allowed_mime_types=null;
+insert into storage.buckets(id,name,public,file_size_limit) values('published-games','published-games',true,1073741824) on conflict(id) do update set public=true,file_size_limit=1073741824;
 create policy "developers upload private packages" on storage.objects for insert to authenticated with check(bucket_id='game-submissions' and (storage.foldername(name))[1]=auth.uid()::text and public.is_developer());
 create policy "owners and admins read packages" on storage.objects for select to authenticated using(bucket_id='game-submissions' and ((storage.foldername(name))[1]=auth.uid()::text or public.is_admin()));
 -- Set your account as admin after signup. Replace the UUID from Authentication > Users:
