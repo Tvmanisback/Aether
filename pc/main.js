@@ -1,7 +1,7 @@
 const {app,BrowserWindow,shell,ipcMain,dialog}=require("electron");
 const path=require("path"),fs=require("fs/promises");
-const SUPABASE_URL="YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL="https://geatwtetakqovmsiqaln.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_a4Qvd2g6Y-uhk2nFGpRvZw_qKzNzMEm";
 const configured=!SUPABASE_URL.startsWith("YOUR_")&&!SUPABASE_ANON_KEY.startsWith("YOUR_");
 let win;
 const baseDir=()=>path.join(app.getPath("userData"),"games");
