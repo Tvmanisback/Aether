@@ -7,7 +7,7 @@ Aether is a Windows game library and a website where you can discover independen
 1. Open the Aether website and create an account. You must be at least 13.
 2. Browse the Store and play the built-in **Introduction to Aether** demo in your browser.
 3. Download the Aether Windows app when a Windows build is published.
-4. Approved full games are intended to be installed and played through the Windows app. The website does not run uploaded games.
+4. The Aether Windows app lists approved games, downloads their files into your Aether game library, and asks before launching a third-party EXE. The website does not run uploaded games.
 
 ## Developer access
 
