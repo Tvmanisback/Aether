@@ -6,9 +6,9 @@ language plpgsql security definer set search_path=public as $$
 begin
   if new.status='approved' and old.status is distinct from 'approved' then
     update public.profiles
-    set role='developer',
+    set role=case when role='player' then 'developer' else role end,
         developer_public_key=coalesce(developer_public_key,'aether_pk_'||encode(gen_random_bytes(32),'hex'))
-    where id=new.user_id and role='player';
+    where id=new.user_id;
   end if;
   return new;
 end $$;
