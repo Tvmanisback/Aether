@@ -17,6 +17,8 @@ Deno.serve(async req=>{
   const {data:s,error}=await admin.from("game_submissions").select("*").eq("id",submission_id).single();
   if(error||!s)return Response.json({error:"Submission not found"},{status:404,headers:cors});
   if(s.status!=="pending_human_review")return Response.json({error:"Submission is not awaiting review"},{status:409,headers:cors});
+  const {data:developer}=await admin.from("profiles").select("developer_public_key").eq("id",s.user_id).single();
+  if(!developer?.developer_public_key)return Response.json({error:"Developer authentication key is missing. Re-approve the developer application after running the key migration."},{status:409,headers:cors});
   const bucket="game-submissions",destBucket="published-games",sourceRoot=s.package_path;
   const listAll=async(path:string):Promise<any[]>=>{
     const {data,error}=await admin.storage.from(bucket).list(path,{limit:1000});
@@ -43,7 +45,7 @@ Deno.serve(async req=>{
     }
     const {data:game,error:insertErr}=await admin.from("games").insert({
       submission_id:s.id,developer_id:s.user_id,title:s.title,description:s.description,
-      package_path:publicRoot,executable_path:publicRoot+"/"+exeRel,source_path:"",package_manifest:s.package_manifest,status:"approved"
+      package_path:publicRoot,executable_path:publicRoot+"/"+exeRel,source_path:"",package_manifest:s.package_manifest,developer_public_key:developer.developer_public_key,status:"approved"
     }).select().single();
     if(insertErr)throw insertErr;
     const {error:updateErr}=await admin.from("game_submissions").update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",s.id);
