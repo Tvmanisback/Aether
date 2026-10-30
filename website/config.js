@@ -1,0 +1,2 @@
+// Paste your Supabase project URL and anon/publishable key here. Never put a service_role key in browser code.
+window.AETHER_CONFIG = { supabaseUrl: "https://YOUR_PROJECT.supabase.co", supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY" };
