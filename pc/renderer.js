@@ -1,4 +1,9 @@
 const $=id=>document.getElementById(id);
+const AUTH_SITE="https://tvmanisback.github.io/Aether/";
+$("websiteLink").onclick=e=>{e.preventDefault();window.aether.openExternal(AUTH_SITE)};
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginButton").disabled=true;$("loginError").textContent="Signing in…";try{await window.aether.login($("loginEmail").value.trim(),$("loginPassword").value);$("authScreen").hidden=true;$("logoutButton").hidden=false;$("loginError").textContent="";showPage("home");await loadStore();await loadLibrary()}catch(err){$("loginError").textContent=err.message;$("loginButton").disabled=false}};
+$("logoutButton").onclick=async()=>{await window.aether.logout();$("authScreen").hidden=false;$("loginPassword").value="";$("loginButton").disabled=false;$("logoutButton").hidden=true;$("storeGames").replaceChildren();$("gameList").replaceChildren();$("status").textContent="Signed out"};
+
 function showPage(name){document.querySelectorAll(".main>section").forEach(s=>s.hidden=true);$(name).hidden=false;document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===name));$("heading").textContent=name==="home"?"Welcome to Aether":name==="store"?"Aether Store":name==="library"?"My Library":name[0].toUpperCase()+name.slice(1)}
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{showPage(b.dataset.page);if(b.dataset.page==="store")loadStore();if(b.dataset.page==="library")loadLibrary()});
 $("browse").onclick=()=>{showPage("store");loadStore()};
