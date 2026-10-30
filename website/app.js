@@ -1,6 +1,6 @@
 // Public client configuration. These are publishable browser values, never server secrets.
-const SUPABASE_URL="YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL="https://geatwtetakqovmsiqaln.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_a4Qvd2g6Y-uhk2nFGpRvZw_qKzNzMEm";
 const configured=!SUPABASE_URL.startsWith("YOUR_")&&!SUPABASE_ANON_KEY.startsWith("YOUR_");
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let user=null,profile=null,authMode="signin";
