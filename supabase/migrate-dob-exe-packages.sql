@@ -25,3 +25,5 @@ end $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();
 update storage.buckets set public=false,file_size_limit=1073741824,allowed_mime_types=null where id='game-submissions';
+
+insert into storage.buckets(id,name,public,file_size_limit) values('published-games','published-games',true,1073741824) on conflict(id) do update set public=true,file_size_limit=1073741824;
