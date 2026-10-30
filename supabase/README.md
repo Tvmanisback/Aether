@@ -15,14 +15,14 @@ For the **existing prototype project** that already ran the old schema:
 
 Do not rerun the original schema on an existing database: its policies are not designed as a repeatable migration.
 
-## 2. Configure authentication
+## 2. Configure game upload size\n\nAether allows up to 10 GiB (10,737,418,240 bytes) per complete game package. For an existing project, run `migrate-game-upload-limit-10gb.sql` in the Supabase SQL Editor. For a new project, `schema.sql` already sets both game buckets to 10 GiB per object. Also check **Project Settings → Storage** and make sure the project's global file-size limit is at least 10 GiB; the maximum available depends on your Supabase plan. Large uploads may require resumable uploads and sufficient storage/bandwidth quota.\n\n## 3. Configure authentication
 
 1. In **Authentication → Providers**, enable Email.
 2. Require email confirmation for public use.
 3. In **Authentication → URL Configuration**, add your GitHub Pages website URL and any local development URL.
 4. Aether accounts require a date of birth showing age 13+. Developer applications require age 18+. These are self-declared dates, not verified identity or age checks.
 
-## 3. Configure the public client values
+## 4. Configure the public client values
 
 Copy the Supabase **Project URL** and **anon/public key** from Project Settings → API.
 
@@ -34,7 +34,7 @@ Aether does not use a hard-coded shared key. When an admin approves a developer 
 
 Never put the Supabase **service-role key** in either public file, the desktop app, a game folder, or the README.
 
-## 4. Make your account an admin
+## 5. Make your account an admin
 
 1. Create your account through the Aether website.
 2. In Supabase, open **Authentication → Users** and copy your user's UUID.
@@ -48,7 +48,7 @@ where id = 'YOUR_AUTH_USER_UUID';
 
 The admin review panel appears after you sign in again.
 
-## 5. Deploy the game publishing function
+## 6. Deploy the game publishing function
 
 The website's moderator approval calls `publish-game`. It copies approved files from the private `game-submissions` bucket into the public `published-games` bucket and creates the public catalog row.
 
@@ -60,7 +60,7 @@ The website's moderator approval calls `publish-game`. It copies approved files 
 
 The function checks that the caller is signed in and has the admin role. Do not disable JWT verification.
 
-## 6. Deploy game authentication
+## 7. Deploy game authentication
 
 1. In **Edge Functions**, create a function named `game-auth`.
 2. Deploy `supabase/functions/game-auth/index.ts`.
@@ -68,7 +68,7 @@ The function checks that the caller is signed in and has the admin role. Do not 
 4. A game sends its `game_id`, the developer's `x-aether-public-key`, and the player's normal Aether Supabase access token. The backend validates both the signed-in user session and that the key belongs to that published game.
 5. A public key by itself never authenticates a user. Do not put service-role keys or private signing secrets in a game.
 
-## 7. Build and publish the Windows app
+## 8. Build and publish the Windows app
 
 1. In the GitHub repository, edit `website/app.js` and `pc/main.js` with the same Supabase Project URL and anon/public key.
 2. In repository **Settings → Pages**, publish from the `main` branch and root folder.
