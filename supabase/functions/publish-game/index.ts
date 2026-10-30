@@ -36,8 +36,10 @@ Deno.serve(async req=>{
     const publicRoot=s.id;
     for(const file of files){
       const rel=file.path.slice(sourceRoot.length+1);
-      const {error:copyErr}=await admin.storage.from(bucket).copy(file.path,destBucket+"/"+publicRoot+"/"+rel);
-      if(copyErr)throw copyErr;
+      const {data:blob,error:downloadErr}=await admin.storage.from(bucket).download(file.path);
+      if(downloadErr||!blob)throw downloadErr||new Error("Could not read package file");
+      const {error:uploadErr}=await admin.storage.from(destBucket).upload(publicRoot+"/"+rel,blob,{upsert:true});
+      if(uploadErr)throw uploadErr;
     }
     const {data:game,error:insertErr}=await admin.from("games").insert({
       submission_id:s.id,developer_id:s.user_id,title:s.title,description:s.description,
