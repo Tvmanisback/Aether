@@ -43,7 +43,7 @@ Deno.serve(async req=>{
     }
     const {data:game,error:insertErr}=await admin.from("games").insert({
       submission_id:s.id,developer_id:s.user_id,title:s.title,description:s.description,
-      package_path:publicRoot,executable_path:publicRoot+"/"+exeRel,source_path:"",status:"approved"
+      package_path:publicRoot,executable_path:publicRoot+"/"+exeRel,source_path:"",package_manifest:s.package_manifest,status:"approved"
     }).select().single();
     if(insertErr)throw insertErr;
     const {error:updateErr}=await admin.from("game_submissions").update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",s.id);
