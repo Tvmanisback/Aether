@@ -10,6 +10,7 @@ alter table public.game_submissions alter column source_path drop not null;
 alter table public.games add column if not exists executable_path text;
 alter table public.games add column if not exists status text not null default 'approved';
 alter table public.games add column if not exists cover_url text;
+alter table public.games add column if not exists package_manifest jsonb not null default '{}'::jsonb;
 drop policy if exists "apply own once" on public.developer_applications;
 create policy "apply own once" on public.developer_applications for insert with check(user_id=auth.uid() and birth_date is not null and birth_date<=current_date - interval '18 years');
 create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$
