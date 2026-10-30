@@ -26,5 +26,5 @@ Deno.serve(async req=>{
   if(insertErr)throw insertErr;
   const {error:updateErr}=await admin.from("game_submissions").update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",s.id);if(updateErr)throw updateErr;
   return Response.json({ok:true,game_id:game.id},{headers:cors});
- }catch(e){return Response.json({error:String((e as Error)?.message||e)},{status:500,headers:cors})}
+ }catch(e){console.error("publish-game failed:",e);return Response.json({error:String((e as Error)?.message||e)},{status:500,headers:cors})}
 });
